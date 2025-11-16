@@ -668,24 +668,3 @@ button:hover { transform: translateY(-2px); }
 #reminderBot button { background: var(--accent); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
 .dark-mode #reminderBot { background: #0f172a; color: #dbe7ff; }
 
-/* -------------------------------
-   MOBILE SIDEBAR ALWAYS VISIBLE
---------------------------------*/
-@media (max-width: 900px) {
-
-  /* SHOW sidebar instead of hiding */
-  .sidebar {
-    display: block !important;
-    width: 200px !important;
-    height: 100vh;
-    left: 0;
-    top: 0;
-    z-index: 9999;
-  }
-
-  /* Adjust content so it does not hide behind sidebar */
-  .content {
-    margin-left: 200px !important;
-    width: calc(100% - 200px) !important;
-  }
-}
