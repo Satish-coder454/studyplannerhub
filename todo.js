@@ -17,6 +17,103 @@ if (!studyData.lastStudyDate) studyData.lastStudyDate = "";
 ------------------------*/
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* -----------------------
+    MOCK TEST AREA (NEW)
+------------------------*/
+
+const mockUpload = document.getElementById("mockUpload");
+const mockDurationInput = document.getElementById("mockDuration");
+const startMockBtn = document.getElementById("startMockBtn");
+const endMockBtn = document.getElementById("endMockBtn");
+const mockDisplayContainer = document.getElementById("mockDisplayContainer");
+const mockFileNameEl = document.getElementById("mockFileName");
+const mockFileLinkEl = document.getElementById("mockFileLink");
+const mockTimerStatusEl = document.getElementById("mockTimerStatus");
+
+let mockTestInterval = null;
+let mockTimeRemaining = 0;
+let mockTimerRunning = false;
+
+// Function to format time for the mock test timer
+function formatMockTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `Remaining: ${pad(m)}:${pad(s)}`;
+}
+
+// 1. Handle File Upload
+mockUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        mockDisplayContainer.style.display = 'block';
+        mockFileNameEl.textContent = `File: ${file.name}`;
+        
+        // Create a local URL for the file to allow viewing
+        const fileURL = URL.createObjectURL(file);
+        mockFileLinkEl.href = fileURL;
+        mockFileLinkEl.style.display = 'inline';
+
+        mockTimerStatusEl.textContent = 'Ready to start.';
+    } else {
+        mockDisplayContainer.style.display = 'none';
+        mockFileNameEl.textContent = 'No file loaded.';
+        mockFileLinkEl.style.display = 'none';
+        mockTimerStatusEl.textContent = '';
+    }
+});
+
+// 2. Start Test Function
+startMockBtn.addEventListener("click", () => {
+    const duration = Number(mockDurationInput.value);
+    
+    if (mockTimerRunning) return alert("Test already running!");
+    if (!mockUpload.files.length) return alert("Please upload a mock paper first.");
+    if (duration < 10) return alert("Duration must be at least 10 minutes.");
+
+    mockTimeRemaining = duration * 60;
+    mockTimerRunning = true;
+
+    // UI Updates
+    mockTimerStatusEl.textContent = formatMockTime(mockTimeRemaining);
+    startMockBtn.style.display = 'none';
+    endMockBtn.style.display = 'block';
+    
+    // Start the countdown
+    mockTestInterval = setInterval(() => {
+        mockTimeRemaining--;
+        mockTimerStatusEl.textContent = formatMockTime(mockTimeRemaining);
+
+        if (mockTimeRemaining <= 0) {
+            clearInterval(mockTestInterval);
+            mockTimerRunning = false;
+            mockTimerStatusEl.textContent = "TIME'S UP! Test finished. 🛑";
+            endMockBtn.style.display = 'none';
+            startMockBtn.style.display = 'block';
+            alert("Mock Test Complete! Time to review.");
+            // Log study activity upon test completion
+            markStudiedToday(); 
+        }
+    }, 1000);
+});
+
+// 3. End Test Function (Manual Stop)
+endMockBtn.addEventListener("click", () => {
+    if (!mockTimerRunning) return;
+
+    clearInterval(mockTestInterval);
+    mockTimerRunning = false;
+    
+    const minutesElapsed = Math.floor((Number(mockDurationInput.value) * 60 - mockTimeRemaining) / 60);
+    
+    mockTimerStatusEl.textContent = `Test ended early. Duration: ${minutesElapsed} minutes.`;
+    endMockBtn.style.display = 'none';
+    startMockBtn.style.display = 'block';
+    markStudiedToday(); // Log study activity
+});
+
+// Initial state check
+endMockBtn.style.display = 'none';
+mockDisplayContainer.style.display = 'none';
 
     /* -----------------------
         DAILY QUOTE
