@@ -177,7 +177,24 @@
 
         <div id="discussionThread" style="margin-top:12px;"></div>
       </div>
+<div class="card" id="mock-test">
+        <h2>📚 Mock Test Simulation</h2>
 
+        <div class="mock-controls">
+          <input type="file" id="mockUpload" accept=".pdf,.doc,.docx,.jpg,.png" />
+          <input type="number" id="mockDuration" value="60" min="10" max="300" placeholder="Duration (min)" style="width: 150px;" />
+          <button id="startMockBtn">Start Test</button>
+        </div>
+
+        <div id="mockDisplayContainer" style="margin-top: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 8px; min-height: 100px; display: none;">
+          <p id="mockFileName">No file loaded.</p>
+          <a id="mockFileLink" href="#" target="_blank" style="display: none; color: var(--accent);">View Paper</a>
+        </div>
+        
+        <div id="mockTimerStatus" style="margin-top: 15px; font-weight: bold; color: #f44336;"></div>
+        
+        <button id="endMockBtn" style="margin-top: 15px; background: #f44336; display: none;">End Test</button>
+      </div>
       <!-- MEET -->
       <div class="card meet-box" id="meet">
         <h2 class="meet-title">📡 Meet Live</h2>
