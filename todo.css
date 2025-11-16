@@ -453,3 +453,44 @@ button:hover { transform: translateY(-2px); }
     background-color: #1f2937;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
+/* --- Mock Test Area Styling --- */
+.mock-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap; /* ensures responsiveness */
+}
+
+.mock-controls input[type="file"] {
+    flex-grow: 1;
+    min-width: 150px;
+    border: none;
+    padding: 0;
+}
+
+#mockDuration {
+    flex-grow: 0;
+    width: 120px;
+    text-align: center;
+}
+
+#mockFileLink {
+    margin-left: 10px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Dark Mode for Mock Test Area */
+body.dark-mode #mock-test #mockDisplayContainer {
+    border-color: #374151;
+    background: #1e293b;
+}
+
+@media (max-width: 900px) {
+    .mock-controls {
+        flex-direction: column;
+    }
+    .mock-controls input[type="number"], .mock-controls button, .mock-controls input[type="file"] {
+        width: 100%;
+    }
+}
