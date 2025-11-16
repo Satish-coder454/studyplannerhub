@@ -335,4 +335,38 @@ button:hover { transform: translateY(-2px); }
 #reminderBot input[type="time"] { padding:6px 8px; border-radius:6px; border:1px solid var(--border-subtle); }
 #reminderBot button { background: var(--accent); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
 .dark-mode #reminderBot { background: #0f172a; color: #dbe7ff; }
- 
+ /* 🌙 DARK MODE FIX — WEEKLY PLANNER */
+.dark-mode .planner-day {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark-mode .planner-day h3 {
+  color: #a5b4fc !important;
+}
+
+.dark-mode .planner-task {
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark-mode .planner-task span {
+  color: #e2e8f0 !important;
+}
+
+.dark-mode .edit-btn,
+.dark-mode .delete-btn {
+  background: #475569 !important;
+  color: #f8fafc !important;
+  border: 1px solid #64748b !important;
+}
+
+.dark-mode .edit-btn:hover {
+  background: #3b82f6 !important;
+}
+
+.dark-mode .delete-btn:hover {
+  background: #ef4444 !important;
+}
