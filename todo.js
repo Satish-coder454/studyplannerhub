@@ -288,83 +288,142 @@ mockDisplayContainer.style.display = 'none';
     renderTasks();
 
 
-    /* -----------------------
-        WEEKLY PLANNER (NEW)
-    ------------------------*/
+   /* -----------------------
+    WEEKLY PLANNER — BEAUTIFIED
+------------------------*/
 
-    const plannerDateEl = document.getElementById("plannerDate");
-    const plannerTaskEl = document.getElementById("plannerTask");
-    const savePlannerBtn = document.getElementById("savePlannerBtn");
-    const weekCalendarEl = document.getElementById("weekCalendar");
+const plannerDateEl = document.getElementById("plannerDate");
+const plannerTaskEl = document.getElementById("plannerTask");
+const savePlannerBtn = document.getElementById("savePlannerBtn");
+const weekCalendarEl = document.getElementById("weekCalendar");
 
-    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let plannerData = JSON.parse(localStorage.getItem("plannerData") || "{}");
 
-    function savePlanner() {
-        const dateVal = plannerDateEl.value;
-        const taskText = plannerTaskEl.value.trim();
+const days = [
+    "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+];
 
-        if (!dateVal || !taskText) return alert("Select a date & enter a task!");
+// Emojis for daily aesthetics ✨
+const dayIcons = {
+    Sunday: "☀️",
+    Monday: "💼",
+    Tuesday: "📝",
+    Wednesday: "📌",
+    Thursday: "📚",
+    Friday: "⚡",
+    Saturday: "🌈"
+};
 
-        const date = new Date(dateVal);
-        const dayName = days[date.getDay()];
+// Add task
+function savePlanner() {
+    const dateVal = plannerDateEl.value;
+    const taskText = plannerTaskEl.value.trim();
 
-        if (!plannerData[dayName]) plannerData[dayName] = [];
-        plannerData[dayName].push(taskText);
+    if (!dateVal || !taskText)
+        return alert("Select a date & enter a task!");
 
-        localStorage.setItem("plannerData", JSON.stringify(plannerData));
-        plannerTaskEl.value = "";
-        renderPlanner();
-    }
+    const date = new Date(dateVal);
+    const dayName = days[date.getDay()];
 
-    savePlannerBtn.addEventListener("click", savePlanner);
+    if (!plannerData[dayName]) plannerData[dayName] = [];
 
-    window.editPlannerTask = function(day, i) {
-        let newText = prompt("Edit task:", plannerData[day][i]);
-        if (newText === null) return;
+    plannerData[dayName].push({
+        text: taskText,
+        done: false,
+        created: Date.now()
+    });
 
-        plannerData[day][i] = newText;
-        localStorage.setItem("plannerData", JSON.stringify(plannerData));
-        renderPlanner();
-    };
+    // Sort tasks alphabetically
+    plannerData[dayName].sort((a, b) => a.text.localeCompare(b.text));
 
-    window.deletePlannerTask = function(day, i) {
-        plannerData[day].splice(i, 1);
-        if (plannerData[day].length === 0) delete plannerData[day];
+    localStorage.setItem("plannerData", JSON.stringify(plannerData));
 
-        localStorage.setItem("plannerData", JSON.stringify(plannerData));
-        renderPlanner();
-    };
-
-    function renderPlanner() {
-        weekCalendarEl.innerHTML = "";
-
-        days.forEach(day => {
-            const box = document.createElement("div");
-            box.className = "planner-day";
-
-            box.innerHTML = `<h3>${day}</h3>`;
-
-            const tasks = plannerData[day] || [];
-            tasks.forEach((task, index) => {
-                const row = document.createElement("div");
-                row.className = "planner-task";
-
-                row.innerHTML = `
-                    <span>${task}</span>
-                    <div>
-                        <button class="edit-btn" onclick="editPlannerTask('${day}', ${index})">Edit</button>
-                        <button class="delete-btn" onclick="deletePlannerTask('${day}', ${index})">X</button>
-                    </div>
-                `;
-
-                box.appendChild(row);
-            });
-
-            weekCalendarEl.appendChild(box);
-        });
-    }
-
+    plannerTaskEl.value = "";
+    animateAdd(dayName);
     renderPlanner();
+}
+
+savePlannerBtn.addEventListener("click", savePlanner);
+
+// Edit task modal (native prompt)
+window.editPlannerTask = function(day, i) {
+    let newText = prompt("Edit task:", plannerData[day][i].text);
+    if (newText === null) return;
+
+    plannerData[day][i].text = newText.trim() || plannerData[day][i].text;
+
+    localStorage.setItem("plannerData", JSON.stringify(plannerData));
+    renderPlanner();
+};
+
+// Delete task
+window.deletePlannerTask = function(day, i) {
+    plannerData[day].splice(i, 1);
+    if (plannerData[day].length === 0) delete plannerData[day];
+
+    localStorage.setItem("plannerData", JSON.stringify(plannerData));
+    renderPlanner();
+};
+
+// Toggle completed state
+window.togglePlannerDone = function(day, i) {
+    plannerData[day][i].done = !plannerData[day][i].done;
+    localStorage.setItem("plannerData", JSON.stringify(plannerData));
+    renderPlanner();
+};
+
+// Add glow pulse animation
+function animateAdd(day) {
+    const card = document.querySelector(`[data-day="${day}"]`);
+    if (!card) return;
+
+    card.classList.add("pulse-add");
+    setTimeout(() => card.classList.remove("pulse-add"), 700);
+}
+
+// Render Planner
+function renderPlanner() {
+    weekCalendarEl.innerHTML = "";
+
+    days.forEach(day => {
+        const box = document.createElement("div");
+        box.className = "planner-day";
+        box.dataset.day = day;
+
+        // Daily title with emoji & animations 🎨
+        box.innerHTML = `
+            <h3>
+                <span style="font-size:1.3rem">${dayIcons[day]}</span>
+                ${day}
+            </h3>
+        `;
+
+        const tasks = plannerData[day] || [];
+
+        tasks.forEach((task, index) => {
+            const row = document.createElement("div");
+            row.className = "planner-task";
+            if (task.done) row.classList.add("task-done");
+
+            row.innerHTML = `
+                <span>
+                    <input type="checkbox" ${task.done ? "checked" : ""} onclick="togglePlannerDone('${day}', ${index})" />
+                    ${task.text}
+                </span>
+                <div>
+                    <button class="edit-btn" onclick="editPlannerTask('${day}', ${index})">Edit</button>
+                    <button class="delete-btn" onclick="deletePlannerTask('${day}', ${index})">X</button>
+                </div>
+            `;
+
+            box.appendChild(row);
+        });
+
+        weekCalendarEl.appendChild(box);
+    });
+}
+
+renderPlanner();
 
 
     /* -----------------------
@@ -719,4 +778,27 @@ audioPlayer?.addEventListener("play", () => {
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
+});
+const menuButton = document.getElementById("menuIcon");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("overlay");
+
+menuButton.addEventListener("click", () => {
+    const isOpen = sidebar.classList.contains("open");
+
+    if (isOpen) {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        menuButton.classList.remove("open");
+    } else {
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        menuButton.classList.add("open");
+    }
+});
+
+overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    menuButton.classList.remove("open");
 });
