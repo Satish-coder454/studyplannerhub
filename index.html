@@ -149,17 +149,8 @@
         </div>
       </section>
 
-      <!-- WEEKLY PLANNER -->
-      <section class="card" id="planner">
-        <h2>📆 Weekly Planner</h2>
-        <div id="weekCalendar" class="week-grid" aria-live="polite"></div>
-
-        <div class="planner-controls">
-          <input type="date" id="plannerDate" />
-          <input type="text" id="plannerTask" placeholder="Task" />
-          <button id="savePlannerBtn">Add</button>
-        </div>
-      </section>
+    
+     
 
       <!-- DISCUSSION -->
       <section class="card" id="discussion">
@@ -192,6 +183,22 @@
         <div id="mockTimerStatus" aria-live="polite"></div>
         <button id="endMockBtn" style="display:none; background:#f44336;">End Test</button>
       </section>
+      <!-- MONTHLY PLANNER -->
+<section class="card" id="monthly-planner">
+    <h2>📆 Monthly Planner</h2>
+
+    <div class="month-header">
+        <button id="prevMonthBtn">◀</button>
+        <h3 id="monthTitle">Month 2025</h3>
+        <button id="nextMonthBtn">▶</button>
+    </div>
+
+    <div class="calendar-grid" id="calendarGrid">
+        <!-- JS will inject days here -->
+         
+    </div>
+</section>
+
 
       <!-- MEET -->
       <section class="card" id="meet">
@@ -244,5 +251,43 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="todo.js"></script>
+  <!-- DAILY NOTE MODAL -->
+<div class="dn-modal" id="dailyNoteModal" aria-hidden="true">
+    <div class="dn-overlay" id="dnOverlay"></div>
+
+    <div class="dn-panel">
+        <div class="dn-header">
+            <div>
+                <h3 id="dnDateLabel">Date</h3>
+                <div class="dn-sub">Your notes & tasks for this day</div>
+            </div>
+            <div class="dn-actions">
+                <button id="dnClose">✕</button>
+            </div>
+        </div>
+
+        <div class="dn-body">
+            <label class="dn-label">Notes</label>
+            <textarea id="dnNoteArea" class="dn-textarea" placeholder="Write something..."></textarea>
+
+            <label class="dn-label">Tasks</label>
+            <div class="dn-task-header">
+                <input id="dnTaskInput" placeholder="Task name..." />
+                <button id="dnAddTask">Add</button>
+            </div>
+
+            <ul id="dnTaskList" class="dn-task-list"></ul>
+        </div> 
+
+        <div class="dn-footer">
+            <button id="dnDeleteAll" class="dn-btn dn-ghost">Delete All</button>
+            <button id="dnSaveBtn" class="dn-btn">Save</button>
+            <span id="dnSavedStamp" class="dn-saved"></span>
+
+            <button id="dnCloseBtn" class="dn-btn" style="margin-left:auto;">Close</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
