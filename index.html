@@ -9,13 +9,21 @@
 </head>
 
 <body>
+<!-- HAMBURGER MENU -->
+<div id="menuIcon" class="menu-button" aria-label="Open sidebar" role="button" tabindex="0">
+  <div class="bar bar1"></div>
+  <div class="bar bar2"></div>
+  <div class="bar bar3"></div>
+</div>
 
-  <!-- 🌟 HAMBURGER MENU ICON -->
-  <div id="menuIcon" class="menu-button" aria-label="Open sidebar" role="button" tabindex="0">
-    <div class="bar bar1"></div>
-    <div class="bar bar2"></div>
-    <div class="bar bar3"></div>
-  </div>
+<!-- GOOGLE SEARCH BOX (fixed position) -->
+<div class="google-search-box">
+  <form action="https://www.google.com/search" method="GET" target="_blank">
+      <input type="text" name="q" placeholder="Search Google..." class="google-input">
+      <button type="submit" class="google-btn">🔍</button>
+  </form>
+</div>
+
 
   <!-- Dim overlay when sidebar opens -->
   <div id="overlay" aria-hidden="true"></div>
@@ -31,8 +39,10 @@
       <a href="#sticky-notes" class="side-link">📌 Sticky Notes</a>
       <a href="#planner" class="side-link">📆 Weekly Planner</a>
       <a href="#discussion" class="side-link">💬 Discussion Board</a>
+      
       <a href="#meet" class="side-link">📡 Meet Live</a>
       <a href="#music" class="side-link">🎶 Study Music</a>
+
 
       <!-- THEME TOGGLE -->
       <div class="toggle-container" id="themeToggleBox" aria-hidden="false">
