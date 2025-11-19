@@ -877,6 +877,141 @@ setInterval(() => {
         }
     }
 }, 60000);
+/* -----------------------
+   LIBRARY SYSTEM (Option C)
+------------------------*/
+
+let library = JSON.parse(localStorage.getItem("library") || "[]");
+
+const libTitle = document.getElementById("libTitle");
+const libAuthor = document.getElementById("libAuthor");
+const libTags = document.getElementById("libTags");
+const libFile = document.getElementById("libFile");
+const libAddBtn = document.getElementById("libAddBtn");
+const libraryGrid = document.getElementById("libraryGrid");
+
+const libModal = document.getElementById("libModal");
+const libOverlay = document.getElementById("libOverlay");
+const libClose = document.getElementById("libClose");
+const libModalTitle = document.getElementById("libModalTitle");
+const libModalAuthor = document.getElementById("libModalAuthor");
+const libModalTags = document.getElementById("libModalTags");
+const libProgressSlider = document.getElementById("libProgressSlider");
+const libProgressValue = document.getElementById("libProgressValue");
+const libNotes = document.getElementById("libNotes");
+const libFileLink = document.getElementById("libFileLink");
+const libSaveBtn = document.getElementById("libSaveBtn");
+const libDeleteBtn = document.getElementById("libDeleteBtn");
+
+let currentBookId = null;
+
+function saveLibrary() {
+    localStorage.setItem("library", JSON.stringify(library));
+}
+
+function renderLibrary() {
+    libraryGrid.innerHTML = "";
+
+    library.forEach(b => {
+        const card = document.createElement("div");
+        card.className = "library-card";
+        card.dataset.id = b.id;
+
+        card.innerHTML = `
+            <h4>${b.title}</h4>
+            <div>By: ${b.author}</div>
+            <div class="library-tags">${b.tags.join(", ")}</div>
+            <small>Progress: ${b.progress}%</small>
+        `;
+
+        card.addEventListener("click", () => openLibraryModal(b.id));
+        libraryGrid.appendChild(card);
+    });
+}
+
+libAddBtn.addEventListener("click", () => {
+    const title = libTitle.value.trim();
+    const author = libAuthor.value.trim();
+    const tags = libTags.value.split(",").map(t => t.trim()).filter(Boolean);
+
+    if (!title) return alert("Enter a book title!");
+
+    let fileURL = "";
+    if (libFile.files.length > 0) {
+        fileURL = URL.createObjectURL(libFile.files[0]);
+    }
+
+    library.push({
+        id: Date.now(),
+        title,
+        author,
+        tags,
+        fileURL,
+        progress: 0,
+        notes: ""
+    });
+
+    saveLibrary();
+    renderLibrary();
+
+    libTitle.value = "";
+    libAuthor.value = "";
+    libTags.value = "";
+    libFile.value = "";
+});
+
+function openLibraryModal(id) {
+    const b = library.find(x => x.id === id);
+    if (!b) return;
+
+    currentBookId = id;
+
+    libModalTitle.textContent = b.title;
+    libModalAuthor.textContent = b.author;
+    libModalTags.textContent = b.tags.join(", ");
+    libProgressSlider.value = b.progress;
+    libProgressValue.textContent = b.progress + "%";
+    libNotes.value = b.notes || "";
+    libFileLink.href = b.fileURL || "#";
+
+    libModal.setAttribute("aria-hidden", "false");
+}
+
+libClose.addEventListener("click", () => {
+    libModal.setAttribute("aria-hidden", "true");
+});
+
+libOverlay.addEventListener("click", () => {
+    libModal.setAttribute("aria-hidden", "true");
+});
+
+libProgressSlider.addEventListener("input", () => {
+    libProgressValue.textContent = libProgressSlider.value + "%";
+});
+
+libSaveBtn.addEventListener("click", () => {
+    const b = library.find(x => x.id === currentBookId);
+    if (!b) return;
+
+    b.progress = Number(libProgressSlider.value);
+    b.notes = libNotes.value;
+
+    saveLibrary();
+    renderLibrary();
+    libModal.setAttribute("aria-hidden", "true");
+});
+
+libDeleteBtn.addEventListener("click", () => {
+    if (!confirm("Delete this book?")) return;
+
+    library = library.filter(x => x.id !== currentBookId);
+    saveLibrary();
+    renderLibrary();
+    libModal.setAttribute("aria-hidden", "true");
+});
+
+renderLibrary();
+
 
 
 /* -----------------------
@@ -921,7 +1056,8 @@ audioPlayer?.addEventListener("ended", () => loadTrack((currentTrack + 1) % play
 // Removed loadTrack(0) here to allow manual control, as the audio player may autoplay (user choice)
 if (currentTrackName) currentTrackName.textContent = "Track: " + playlist[currentTrack];
 
-});  // END DOMContentLoaded
+}
+);  // END DOMContentLoaded
 
 
 /* -----------------------
