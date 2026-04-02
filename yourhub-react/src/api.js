@@ -1,6 +1,13 @@
 export const getToken = () => localStorage.getItem('token')
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+function getBaseUrl() {
+  const envUrl = import.meta.env.VITE_API_URL
+  if (!envUrl) return '/api'
+  if (envUrl.endsWith('/api')) return envUrl
+  return envUrl.replace(/\/$/, '') + '/api'
+}
+
+const BASE_URL = getBaseUrl()
 
 export async function apiRequest(endpoint, options = {}) {
   const token = getToken()
