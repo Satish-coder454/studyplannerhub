@@ -15,10 +15,19 @@ const JWT_SECRET = 'super-secret-yourhub-key' // Default key for dev
 let db;
 
 async function initDB() {
-  db = await open({
-    filename: process.env.DB_PATH || path.join(__dirname, 'database.sqlite'),
-    driver: sqlite3.Database
-  })
+  try {
+    db = await open({
+      filename: process.env.DB_PATH || path.join(__dirname, 'database.sqlite'),
+      driver: sqlite3.Database
+    })
+  } catch (err) {
+    console.error(`❌ Failed to open database at ${process.env.DB_PATH}:`, err.message)
+    console.log('⚠️ Falling back to local directory database.sqlite...')
+    db = await open({
+      filename: path.join(__dirname, 'database.sqlite'),
+      driver: sqlite3.Database
+    })
+  }
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
