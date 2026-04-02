@@ -1,5 +1,7 @@
 export const getToken = () => localStorage.getItem('token')
 
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
 export async function apiRequest(endpoint, options = {}) {
   const token = getToken()
   const headers = {
@@ -8,7 +10,7 @@ export async function apiRequest(endpoint, options = {}) {
     ...options.headers,
   }
 
-  const response = await fetch(`/api${endpoint}`, {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers,
   })
