@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 const path = require('path')
 
 const app = express()
-const cors = require('cors');
+
 
 const allowedOrigins = [
   'https://studyplannerhub-4i8i.vercel.app', // Your Vercel frontend
