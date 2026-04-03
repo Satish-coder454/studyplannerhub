@@ -7,7 +7,28 @@ const jwt = require('jsonwebtoken')
 const path = require('path')
 
 const app = express()
-app.use(cors())
+const cors = require('cors');
+
+const allowedOrigins = [
+  'https://studyplannerhub-4i8i.vercel.app', // Your Vercel frontend
+  'http://localhost:5173',                   // Vite default local port
+  'http://localhost:3000'                    // CRA default local port
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true // Required if you are sending cookies or authorization headers
+}));
 app.use(express.json())
 
 const JWT_SECRET = 'super-secret-yourhub-key' // Default key for dev
