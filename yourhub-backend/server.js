@@ -97,6 +97,14 @@ async function initDB() {
       lastCompletedDate TEXT,
       FOREIGN KEY(userId) REFERENCES users(id)
     );
+    CREATE TABLE IF NOT EXISTS cloudNotes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER,
+      title TEXT,
+      content TEXT,
+      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(userId) REFERENCES users(id)
+    );
   `)
   console.log('✅ SQLite Database ready.')
 }
@@ -233,6 +241,28 @@ app.delete('/api/planner/:iso', auth, async (req, res) => {
   const { iso } = req.params
   await db.run('DELETE FROM dailyNotes WHERE userId = ? AND isoDate = ?', [req.userId, iso])
   await db.run('DELETE FROM dailyTasks WHERE userId = ? AND isoDate = ?', [req.userId, iso])
+  res.json({ success: true })
+})
+
+// --- Cloud Notes ---
+app.get('/api/notes', auth, async (req, res) => {
+  const notes = await db.all('SELECT * FROM cloudNotes WHERE userId = ? ORDER BY updatedAt DESC', [req.userId])
+  res.json(notes)
+})
+
+app.post('/api/notes', auth, async (req, res) => {
+  const { id, title, content } = req.body
+  if (id) {
+    await db.run('UPDATE cloudNotes SET title = ?, content = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ? AND userId = ?', [title, content, id, req.userId])
+    res.json({ success: true })
+  } else {
+    const result = await db.run('INSERT INTO cloudNotes (userId, title, content) VALUES (?, ?, ?)', [req.userId, title, content])
+    res.json({ id: result.lastID })
+  }
+})
+
+app.delete('/api/notes/:id', auth, async (req, res) => {
+  await db.run('DELETE FROM cloudNotes WHERE id = ? AND userId = ?', [req.params.id, req.userId])
   res.json({ success: true })
 })
 

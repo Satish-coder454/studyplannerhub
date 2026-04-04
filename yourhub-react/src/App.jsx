@@ -10,6 +10,7 @@ import MockTest from './components/MockTest'
 import MonthlyPlanner from './components/MonthlyPlanner'
 import MeetSection from './components/MeetSection'
 import MusicSection from './components/MusicSection'
+import CloudNotes from './components/CloudNotes'
 import useStreak from './hooks/useStreak'
 import useClock from './hooks/useClock'
 
@@ -92,6 +93,7 @@ export default function App() {
           <StickyNotes />
           <DiscussionBoard />
           <MockTest />
+          <CloudNotes />
           <MonthlyPlanner />
           <MeetSection />
           <MusicSection />

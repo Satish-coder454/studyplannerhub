@@ -6,6 +6,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, darkMode, onToggleD
     { href: '#monthly-planner', icon: '📆', label: 'Monthly Planner' },
     { href: '#discussion', icon: '💬', label: 'Discussion Board' },
     { href: '#mock-test',  icon: '📚', label: 'Mock Test' },
+    { href: '#cloud-notes', icon: '☁️', label: 'Cloud Space' },
     { href: '#meet',       icon: '📡', label: 'Meet Live' },
     { href: '#music',      icon: '🎶', label: 'Study Music' },
   ]
