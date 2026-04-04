@@ -419,7 +419,9 @@ body {
 /* HERO */
 .card--hero { background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(167,139,250,0.06)); }
 .streak-badge { background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1338;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(251,191,36,0.3);white-space:nowrap; }
-.quote-text { font-size:15px;line-height:1.7;color:var(--text-muted);font-style:italic;padding:14px;background:rgba(108,99,255,0.05);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+.quote-container { padding: 16px; background: rgba(108, 99, 255, 0.04); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.quote-text { font-size:18px; line-height:1.6; color:var(--text-dark); font-style:italic; font-weight: 500; }
+.quote-author { font-size:14px; color:var(--text-muted); text-align:right; margin-top:8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* FIELD INPUTS */
 .field-input { padding:11px 14px;border-radius:var(--radius-md);border:1px solid rgba(108,99,255,0.18);background:rgba(255,255,255,0.7);font-family:var(--font-body);font-size:14px;color:var(--text-dark);outline:none;transition:var(--transition); }
