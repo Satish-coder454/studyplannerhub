@@ -1,4 +1,18 @@
+import { useState, useEffect } from 'react'
+
 export default function Sidebar({ isOpen, onClose, onLogout, darkMode, onToggleDark }) {
+  const [selectedAvatar, setSelectedAvatar] = useState(() => 
+    localStorage.getItem('userAvatar') || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'
+  )
+  const [showPicker, setShowPicker] = useState(false)
+
+  const avatars = [
+    'Felix', 'Aria', 'Luna', 'Orion', 'Nova', 'Atlas'
+  ].map(seed => `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`)
+
+  useEffect(() => {
+    localStorage.setItem('userAvatar', selectedAvatar)
+  }, [selectedAvatar])
   const navLinks = [
     { href: '#motivation', icon: '🌟', label: 'Daily Motivation' },
     { href: '#todo',       icon: '📝', label: 'To-Do List' },
@@ -14,9 +28,32 @@ export default function Sidebar({ isOpen, onClose, onLogout, darkMode, onToggleD
   return (
     <aside className={`sidebar${isOpen ? ' open' : ''}`} aria-label="Main navigation">
       <div className="sidebar-header">
-        <div className="logo">
-          <span className="logo-mark">✦</span>
-          <span className="logo-text">YourHub</span>
+        <div className="header-top">
+          <div className="logo">
+            <span className="logo-mark">✦</span>
+            <span className="logo-text">YourHub</span>
+          </div>
+          <div className="avatar-container">
+            <img 
+              src={selectedAvatar} 
+              alt="User avatar" 
+              className="user-avatar"
+              onClick={() => setShowPicker(!showPicker)}
+            />
+            {showPicker && (
+              <div className="avatar-picker card">
+                {avatars.map(url => (
+                  <img 
+                    key={url} 
+                    src={url} 
+                    className={`picker-avatar ${selectedAvatar === url ? 'active' : ''}`}
+                    onClick={() => { setSelectedAvatar(url); setShowPicker(false); }}
+                    alt="option"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div className="logo-tagline">Study Command Center</div>
       </div>
