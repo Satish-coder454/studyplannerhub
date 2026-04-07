@@ -274,6 +274,42 @@ app.get('/api/planner-dots', auth, async (req, res) => {
   res.json(Array.from(dates))
 })
 
+// --- Study AI Chat Helper ---
+app.post('/api/ai/chat', auth, async (req, res) => {
+  const { message } = req.body
+  const m = message.toLowerCase()
+
+  // Get user context to make it feel "AI"
+  const taskCount = await db.all('SELECT count(*) as count FROM tasks WHERE userId = ? AND completed = 0', [req.userId])
+  const noteCount = await db.all('SELECT count(*) as count FROM cloudNotes WHERE userId = ?', [req.userId])
+
+  let reply = ""
+
+  if (m.includes('hello') || m.includes('hi')) {
+    reply = `Hello, ${req.username || 'there'}! I'm ready to help you study. You have ${taskCount[0].count} pending tasks. What's our focus today?`
+  } else if (m.includes('task') || m.includes('todo')) {
+    reply = `You have ${taskCount[0].count} items on your list. Break them into 25-minute Pomodoro chunks for maximum efficiency! 🕒`
+  } else if (m.includes('note')) {
+    reply = `I see you've saved ${noteCount[0].count} notes in the Cloud. Keep it up! Active recall is the best way to remember them. 📝`
+  } else if (m.includes('exam') || m.includes('test')) {
+    reply = "Exams can be stressful, but preparation is key. Use the Mock Test section to practice, and don't forget to take breaks! 🎓"
+  } else if (m.includes('sketch') || m.includes('canvas')) {
+    reply = "Visualizing your concepts in the Sketchpad is a great strategy for complex subjects like science or math. 🎨"
+  } else if (m.includes('help')) {
+    reply = "I can guide you on task management, note-taking, and study techniques. Just ask about specific parts of YourHub!"
+  } else {
+    const responses = [
+      "That's interesting! How does that connect to your current study goals? 🤔",
+      "I'm here to support your learning journey. Keep pushing! 🚀",
+      "Remember: consistency is better than intensity. A little bit every day goes a long way. 🌟",
+      "Have you tried the Pomodoro technique for this? It might help! ⏲️",
+      "Don't forget to stay hydrated while studying! 💧"
+    ];
+    reply = responses[Math.floor(Math.random() * responses.length)];
+  }
+
+  res.json({ reply })
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, '0.0.0.0', () => {

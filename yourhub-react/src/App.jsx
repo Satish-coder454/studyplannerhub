@@ -12,6 +12,7 @@ import MeetSection from './components/MeetSection'
 import MusicSection from './components/MusicSection'
 import CloudNotes from './components/CloudNotes'
 import SketchPad from './components/SketchPad'
+import AIAssistant from './components/AIAssistant'
 import useStreak from './hooks/useStreak'
 import useClock from './hooks/useClock'
 
@@ -96,6 +97,7 @@ export default function App() {
           <MockTest />
           <CloudNotes />
           <SketchPad />
+          <AIAssistant />
           <MonthlyPlanner />
           <MeetSection />
           <MusicSection />
