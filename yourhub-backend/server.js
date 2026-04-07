@@ -285,7 +285,14 @@ app.post('/api/ai/chat', auth, async (req, res) => {
 
   let reply = ""
 
-  if (m.includes('hello') || m.includes('hi')) {
+  if (m.includes('review these mock test answers')) {
+    const ans = message.replace('Please review these mock test answers:', '').trim()
+    if (ans.length < 50) {
+      reply = "I've analyzed your answers. They seem a bit brief—try to elaborate more on your reasoning next time! In a real exam, detailed explanations often fetch extra marks. 📝"
+    } else {
+      reply = "Great effort on this test! I've reviewed your submission. Your structure is logical, and you've covered the core concepts. To improve, try adding more specific examples or diagrams (use the Sketchpad!) to support your points. Well done! 🌟"
+    }
+  } else if (m.includes('hello') || m.includes('hi')) {
     reply = `Hello, ${req.username || 'there'}! I'm ready to help you study. You have ${taskCount[0].count} pending tasks. What's our focus today?`
   } else if (m.includes('task') || m.includes('todo')) {
     reply = `You have ${taskCount[0].count} items on your list. Break them into 25-minute Pomodoro chunks for maximum efficiency! 🕒`
