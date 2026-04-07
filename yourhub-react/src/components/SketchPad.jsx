@@ -23,14 +23,44 @@ export default function SketchPad() {
     ctxRef.current = ctx
   }, [])
 
+  const getCoordinates = (e) => {
+    const canvas = canvasRef.current
+    if (!canvas) return { x: 0, y: 0 }
+    
+    const rect = canvas.getBoundingClientRect()
+    let clientX, clientY
+
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX
+      clientY = e.touches[0].clientY
+    } else {
+      clientX = e.clientX || e.nativeEvent.offsetX + rect.left
+      clientY = e.clientY || e.nativeEvent.offsetY + rect.top
+      
+      // If offsetX/offsetY are available directly in nativeEvent, use them as they are most reliable
+      if (e.nativeEvent && typeof e.nativeEvent.offsetX !== 'undefined') {
+        return { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }
+      }
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    }
+  }
+
   function startDrawing(e) {
-    const { offsetX, offsetY } = e.nativeEvent
+    if (e.type === 'touchstart') {
+      // Prevent scrolling while drawing on touch devices
+      // e.preventDefault() // Handled by touch-action: none in CSS
+    }
+    
+    const { x, y } = getCoordinates(e)
     if (tool === 'pen' || tool === 'eraser') {
       ctxRef.current.beginPath()
-      ctxRef.current.moveTo(offsetX, offsetY)
+      ctxRef.current.moveTo(x, y)
     } else {
-      setStartPos({ x: offsetX, y: offsetY })
-      // Take a snapshot to restore during drag
+      setStartPos({ x, y })
       const canvas = canvasRef.current
       setSnapshot(ctxRef.current.getImageData(0, 0, canvas.width, canvas.height))
     }
@@ -39,23 +69,22 @@ export default function SketchPad() {
 
   function draw(e) {
     if (!isDrawing) return
-    const { offsetX, offsetY } = e.nativeEvent
+    const { x, y } = getCoordinates(e)
     const ctx = ctxRef.current
 
     ctx.strokeStyle = tool === 'eraser' ? '#ffffff' : color
     ctx.lineWidth = lineWidth
 
     if (tool === 'pen' || tool === 'eraser') {
-      ctx.lineTo(offsetX, offsetY)
+      ctx.lineTo(x, y)
       ctx.stroke()
     } else {
-      // Restore snapshot
       ctx.putImageData(snapshot, 0, 0)
       ctx.beginPath()
       if (tool === 'rect') {
-        ctx.strokeRect(startPos.x, startPos.y, offsetX - startPos.x, offsetY - startPos.y)
+        ctx.strokeRect(startPos.x, startPos.y, x - startPos.x, y - startPos.y)
       } else if (tool === 'circle') {
-        const radius = Math.sqrt(Math.pow(offsetX - startPos.x, 2) + Math.pow(offsetY - startPos.y, 2))
+        const radius = Math.sqrt(Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2))
         ctx.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI)
         ctx.stroke()
       }
@@ -137,6 +166,9 @@ export default function SketchPad() {
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseOut={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
         />
       </div>
 
@@ -192,6 +224,7 @@ export default function SketchPad() {
           display: block;
           width: 100%;
           height: 450px;
+          touch-action: none;
         }
         .dark-mode .canvas-wrapper {
           background: #f8f9fa; /* Slightly off-white for dark mode comfort */
