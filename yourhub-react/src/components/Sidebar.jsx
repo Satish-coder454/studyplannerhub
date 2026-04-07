@@ -21,6 +21,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, darkMode, onToggleD
     { href: '#discussion', icon: '💬', label: 'Discussion Board' },
     { href: '#mock-test',  icon: '📚', label: 'Mock Test' },
     { href: '#cloud-notes', icon: '☁️', label: 'Cloud Space' },
+    { href: '#sketchpad',  icon: '🎨', label: 'Sketch & Diagram' },
     { href: '#meet',       icon: '📡', label: 'Meet Live' },
     { href: '#music',      icon: '🎶', label: 'Study Music' },
   ]
