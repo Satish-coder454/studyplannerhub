@@ -6,7 +6,7 @@ export default function SketchPad() {
   const [isDrawing, setIsDrawing] = useState(false)
   const [color, setColor] = useState('#7c4dff')
   const [lineWidth, setLineWidth] = useState(5)
-  const [tool, setTool] = useState('pen') // pen, eraser, rect, circle
+  const [tool, setTool] = useState(null) // null, pen, eraser, rect, circle
 
   // Initial drawing state for shapes
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
@@ -50,10 +50,7 @@ export default function SketchPad() {
   }
 
   function startDrawing(e) {
-    if (e.type === 'touchstart') {
-      // Prevent scrolling while drawing on touch devices
-      // e.preventDefault() // Handled by touch-action: none in CSS
-    }
+    if (!tool) return
     
     const { x, y } = getCoordinates(e)
     if (tool === 'pen' || tool === 'eraser') {
@@ -217,8 +214,10 @@ export default function SketchPad() {
           background: #ffffff;
           border-radius: 12px;
           overflow: hidden;
-          cursor: crosshair;
+          cursor: ${tool ? 'crosshair' : 'not-allowed'};
+          opacity: ${tool ? 1 : 0.8};
           box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+          transition: all 0.3s;
         }
         canvas {
           display: block;
