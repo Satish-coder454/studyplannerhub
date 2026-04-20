@@ -1,0 +1,12 @@
+{
+  "name": "studyplannerhub",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run build --prefix yourhub-react",
+    "frontend:dev": "npm run dev --prefix yourhub-react",
+    "frontend:build": "npm run build --prefix yourhub-react",
+    "backend:dev": "npm start --prefix yourhub-backend",
+    "install:all": "npm install --prefix yourhub-react && npm install --prefix yourhub-backend"
+  }
+}

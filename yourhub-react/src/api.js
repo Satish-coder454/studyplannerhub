@@ -17,22 +17,32 @@ export async function apiRequest(endpoint, options = {}) {
     ...options.headers,
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  })
-
-  if (response.status === 401 && endpoint !== '/login' && endpoint !== '/register') {
-    localStorage.removeItem('token')
-    localStorage.removeItem('loggedInUser')
-    window.location.reload()
-  }
-
-  const data = await response.json().catch(() => ({}))
+  const url = `${BASE_URL}${endpoint}`
   
-  if (!response.ok) {
-    throw { status: response.status, ...data }
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    })
+
+    if (response.status === 401 && endpoint !== '/login' && endpoint !== '/register') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('loggedInUser')
+      window.location.reload()
+    }
+
+    const data = await response.json().catch(() => ({}))
+    
+    if (!response.ok) {
+      throw { status: response.status, ...data }
+    }
+    
+    return data
+  } catch (err) {
+    console.error(`🌐 API Request Failed: [${options.method || 'GET'}] ${url}`, err)
+    if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+      console.warn('💡 Tip: Check if VITE_API_URL is set correctly in your environment variables.')
+    }
+    throw err
   }
-  
-  return data
 }

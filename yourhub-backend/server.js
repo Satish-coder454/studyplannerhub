@@ -9,29 +9,29 @@ const path = require('path')
 const app = express()
 
 
-const allowedOrigins = [
-  'https://studyplannerhub-4i8i.vercel.app', // Your Vercel frontend
-  'http://localhost:5173',                   // Vite default local port
-  'http://localhost:3000'                    // CRA default local port
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-yourhub-key'
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
+  'https://studyplannerhub-4i8i.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true // Required if you are sending cookies or authorization headers
+  credentials: true
 }));
 app.use(express.json())
 
-const JWT_SECRET = 'super-secret-yourhub-key' // Default key for dev
+// Health check endpoint
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'YourHub Backend is running' }))
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
 let db;
 
@@ -108,7 +108,16 @@ async function initDB() {
   `)
   console.log('✅ SQLite Database ready.')
 }
-initDB()
+// Initialize DB and then start server
+async function start() {
+  await initDB()
+  const PORT = process.env.PORT || 3001
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Backend running on port ${PORT}`)
+  })
+}
+
+start()
 
 // --- Authenticaton Middleware ---
 function auth(req, res, next) {
@@ -318,7 +327,4 @@ app.post('/api/ai/chat', auth, async (req, res) => {
   res.json({ reply })
 })
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Backend running on port ${PORT}`)
-})
+// Server start moved to start() function above
